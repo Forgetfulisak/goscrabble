@@ -1,31 +1,18 @@
 package main
 
 import (
-	"bufio"
+	_ "embed"
 	"fmt"
-	"log"
 	"os"
 	"sort"
 	"strings"
 )
 
-const WordlistPath = "Path/To/Wordlist"
+//go:embed nsf2020.txt
+var wordlist string
 
-func readFile(path string) ([]string, error) {
-
-	file, err := os.Open(path)
-	if err != nil {
-		return nil, err
-	}
-	defer file.Close()
-
-	var words []string
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		words = append(words, scanner.Text())
-	}
-
-	return words, nil
+func parseWords() []string {
+	return strings.Split(wordlist, "\n")
 }
 
 func canBuild(word string, letters string) bool {
@@ -66,10 +53,7 @@ func main() {
 	}
 	letters := os.Args[1]
 
-	legalWords, err := readFile(WordlistPath)
-	if err != nil {
-		log.Fatalln(err)
-	}
+	legalWords := parseWords()
 
 	fmt.Println("Checking:", letters)
 	matches := findAllBuildable(letters, legalWords)
